@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Player Piano</title>
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
 	<link rel="preload" href="piano.json" as="fetch" crossorigin="anonymous" />
@@ -133,7 +134,7 @@
 
 		window.eventLog = [];
 
-	
+
 		const keyboard = document.querySelector(".keyboard");
 		const oscList = [];
 		const audioContext = new AudioContext();
@@ -194,8 +195,9 @@
 				musicKey.textContent = item.note;
 				const keyLabel = document.createElement("span");
 				keyLabel.className = "mapped-to";
+				keyLabel.textContent = matchedKey.key;
 				musicKey.appendChild(keyLabel);
-				
+
 				hookEvents(musicKey);
 
 				if (item.note.length > 1) {
@@ -333,7 +335,7 @@
 			envelope.connect(audioContext.destination);
 
 			// osc.start();
-    
+
 			osc.start(audioContext.currentTime)
 
 			envelope.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + decayRate)
@@ -362,7 +364,7 @@
 					dataset.pressed = "yes";
 				}
 			}
-			
+
 		}
 
 		function noteReleased(event) {
@@ -386,7 +388,7 @@
 			const gameConfig = await response.json();
 			window.setup(gameConfig);
 		}
-		
+
 		getConfig();
 	</script>
 </body>
