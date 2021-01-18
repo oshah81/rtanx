@@ -201,8 +201,6 @@ async function keyDownManager(evt) {
 
 
 async function keyUpManager(evt, key) {
-	const requiredTrials = (await globalThis.pageConfig.configPromise).practiceTrials;
-
 	pressedKeys.delete(key);
 
 	if (!document.getElementById("nextButton").disabled) {
@@ -250,6 +248,7 @@ async function keyUpManager(evt, key) {
 				default:
 					break;
 				case 1: {
+					const requiredTrials = (await globalThis.pageConfig.configPromise).practicetrials;
 					const numCorrectSequences = countCorrectSequences(activePiano, requiredTrials);
 					if (numCorrectSequences == requiredTrials) {
 						globalThis.onNextPage(evt);
@@ -277,6 +276,7 @@ async function keyUpManager(evt, key) {
 				default:
 					break;
 				case 1: {
+					const requiredTrials = (await globalThis.pageConfig.configPromise).practicetrials;
 					const numCorrectSequences = countCorrectSequences(activePiano, requiredTrials);
 					if (numCorrectSequences == requiredTrials) {
 						globalThis.onNextPage(evt);
