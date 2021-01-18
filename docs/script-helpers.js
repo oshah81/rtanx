@@ -206,7 +206,7 @@ async function keyUpManager(evt, key) {
 	pressedKeys.delete(key);
 
 	if (!document.getElementById("nextButton").disabled) {
-		if (key === "Return" || key === "Enter" || key === "Control") {
+		if (key === "Return" || key === "Enter" || key === "Control" || key === "n" || key === "N") {
 			await globalThis.onNextPage(evt);
 			return;
 		}
