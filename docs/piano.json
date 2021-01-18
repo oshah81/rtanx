@@ -52,12 +52,8 @@
 		{ "note": "A#", "octave": 4, "freq": 3729.310092144719331, "alignment": 1100 },
 		{ "note": "B",  "octave": 4, "freq": 3951.066410048992894, "alignment": 1110 }
 	],
-	"notes": "tgtisujkhwjhfhafjkslfsfkrhiadft;stohukkfoo;js;uhdwhttfhhowjhsrt;duduiawalfgdkiolgofwdrdakkfjrukdkkti",
 	"defaultOctave": 1,
-	"roundTime": 4000,
 	"keymap": [
-		{"key": "a", "note": "A", "octave": 0 },
-		{"key": "s", "note": "B", "octave": 0 },
 		{"key": "d", "note": "C" },
 		{"key": "f", "note": "D" },
 		{"key": "g", "note": "E" },
@@ -66,7 +62,6 @@
 		{"key": "k", "note": "A" },
 		{"key": "l", "note": "B" },
 		{"key": ";", "note": "C", "octave": 2 },
-		{"key": "w", "note": "A#", "octave": 0 },
 		{"key": "r", "note": "C#" },
 		{"key": "t", "note": "D#" },
 		{"key": "u", "note": "F#" },

@@ -5,391 +5,217 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Player Piano</title>
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+	<link rel="preload" href="site.css" as="style" />
+	<link rel="preload" href="source-sans-pro-v14-latin-regular.woff2" as="font" crossorigin="anonymous" />
+	<link rel="preload" href="piano-player.css" as="style" />
+	<link rel="preload" href="script-helpers.js" as="script" crossorigin="anonymous" />
+	<link rel="preload" href="piano-player.js" as="script" crossorigin="anonymous" />
+	<link rel="preload" href="config-manager.js" as="script" crossorigin="anonymous" />
+	
 	<link rel="preload" href="piano.json" as="fetch" crossorigin="anonymous" />
-<style type="text/css">
 
-
-	.keyboard {
-		width: 50vw;
-		min-height: 300px;
-		transform: scale(1.5);
-		transform-origin: 0% 0%;
-		user-select: none;
-	}
-	button {
-		border: none;
-	}
-	button:focus {
-		outline: none;
-	}
-
-	.white-notes .mapped-to {
-		color: #888888;
-		font-size: 0.5rem;
-	}
-
-	.white-notes button {
-		height: 150px;
-		width: 30px;
-		position: absolute;
-		z-index: 1;
-		border: 1px solid #404040;
-		background-color: ivory;
-		display: inline-grid;
-		place-content: end center;
-	}
-
-	.white-notes button:hover {
-		background-color: #ddd5e8;
-	}
-
-	.white-notes button[data-pressed="yes"] {
-		background-color: #ddd5e8;
-	}
-
-	.black-notes button {
-		position: absolute;
-		height: 90px;
-		width: 20px;
-		z-index: 2;
-		background-color: #404040;
-		font-size: 0px;
-		display: inline-grid;
-		place-content: end center;
-		padding-bottom: 0.25rem;
-	}
-
-	.black-notes button[data-pressed="yes"] {
-		background-color: #808080;
-		border: 1px solid ivory;
-	}
-
-	.black-notes button:hover {
-		background-color: #808080;
-		border: 1px solid ivory;
-	}
-
-	.black-notes .mapped-to {
-		color: #888888;
-		font-size: 0.5rem;
-	}
-
-	.container {
-		display: grid;
-		grid-template-areas: "aside" "main" "footer";
-		place-items: center;
-	}
-
-	.container > aside { grid-area: aside; }
-	.container > main { grid-area: main; }
-	.container > footer { grid-area: footer; }
-
-	#splash {
-		z-index: 1;
-		background-color: rgba(255, 255, 255, 0.8);
-		width: 100vw;
-		height: 98vh;
-		position: absolute;
-		top: 0;
-		left: 0;
-		text-align: center;
-		font-size: 80vh;
-	}
-
-</style>
+	<link rel="stylesheet" href="site.css" type="text/css" />
+	<script type="module">
+		import ConfigManager from "./config-manager.js";
+		globalThis.pageConfig = new ConfigManager();
+		globalThis.eventLog = globalThis.pageConfig.setup.eventLog;
+	</script>
 </head>
 <body>
 	<div class="container">
-		<aside class="settingsBar">
-			<label>Volume:
-				<input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumesDrop" name="volume" />
-			</label>
-			<datalist id="volumesDrop">
-				<option value="0.0" label="Mute">
-				<option value="1.0" label="100%">
-			</datalist>
-			<label>Game Type:
-			<select id="gameType" oninput="window.newGame(event)">
-				<option>Free</option>
-				<option>Timed</option>
-				<option>Stepped</option>
-			</select>
-			</label>
-		</aside>
+		<header>
+			<aside class="settingsBar">
+				<label>Volume:
+					<input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumesDrop" name="volume" />
+				</label>
+			</aside>
+		</header>
+		
 		<main>
-			<section class="keyboard">
-				<div class="black-notes">
+			<section class="page-1">
+				<h1>Parkinsons trial</h1>
+			</section>
+			<section class="page-2" hidden="hidden">
+				<piano-player notes="kgjh" pace="0.5" volumecontrol="0.5"></piano-player>
+				<p>Place the index, middle, ring, little fingers of your right hand on keyboard keys g-h-j-k. Warm up by pressing the keys up and down in any order, but not simultaneously. Pay attention to the little finger, it should also comfortably press the corresponding key (k). Make sure you hear the tone of each key, at a comfortable sound level. Adjust the volume if you don’t hear the tones.</p>
+				<p>Now you are going to practice sequence 1, represented by this image:</p>
+				<img src="fractal1.png" alt="Pink button" style="width: 200px; height: 200px;" />
+			</section>
+			<section class="page-3" hidden="hidden">
+				<p>Sequence 1 consists of four key presses, in this order:</p>
+				<p>g – j – h – k</p>
+				<p>(that is, index – ring – middle – little finger)</p>
+				<p>Press enter to continue</p>
+				<img src="fractal1.png" alt="Pink button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-4" hidden="hidden">
+				<piano-player notes="gjhk" pace="0.5" volumecontrol="0.5"></piano-player>
+				<p>Sequence 1 consists of four key presses, in this order:</p>
+				<p>g – j – h – k</p>
+				<p>(that is, index – ring – middle – little finger)</p>
+				<p>Try it out at a comfortable speed, you can practice it slowly now, to make sure the order is clear.</p>
+				<p>Take a little break of 1-2 seconds between each performance of the sequence. You can practice it up to 10 times.</p>
+				<span id="steppedGame">Press F1 to have the computer remind you of the sequence</span>
+				<img src="fractal1.png" alt="Pink button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-5" hidden="hidden">
+				<p>Was it enough practice? Can you remember the sequence?</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Press enter to continue</p>
+				<img src="fractal1.png" alt="Pink button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-6" hidden="hidden">
+				<piano-player notes="gjhk" pace="0.5" volumecontrol="0.5"></piano-player>
+				<p class="statusLbl">Try it out! Play it once at a time and wait for the computer to tell you whether it is correct.</p>
+				<p>Hint: It starts with the right index pressing keyboard letter g.</p>
+				<img src="fractal1.png" alt="Pink button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-7" hidden="hidden">
+				<p>Now you are going to practice sequence 2, represented by this image:</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Press enter to continue</p>
+				<img src="fractal2.png" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-8" hidden="hidden">
+				<p>Sequence 2 consists of four key presses, in this order:</p>
+				<p>k – g – j – h</p>
+				<p>(that is, little - index – ring – middle finger)</p>
+				<p>Press enter to continue</p>
+				<img src="fractal2.png" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-9" hidden="hidden">
+				<piano-player notes="kgjh" pace="0.5" volumecontrol="0.5"></piano-player>
+				<p>Sequence 2 consists of four key presses, in this order:</p>
+				<p>k – g – j – h</p>
+				<p>(that is, little - index – ring – middle finger)</p>
+				<p>Try it out at a comfortable speed, you can practice it slowly now, to make sure the order is clear.</p>
+				<p>Take a little break of 1-2 seconds between each performance of the sequence. You can practice it up to 10 times.</p>
+				<span id="steppedGame">Press F1 to have the computer remind you of the sequence</span>
+				<img src="fractal2.png" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-10" hidden="hidden">
+				<p>Was it enough practice? Can you remember the sequence?</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Press enter to continue</p>
+				<img src="fractal2.png" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-11" hidden="hidden">
+				<piano-player notes="kgjh" pace="0.5" volumecontrol="0.5"></piano-player>
+				<p class="statusLbl">Try it out! Play it once at a time and wait for the computer to tell you whether it is correct.</p>
+				<p>Hint: It starts with the right index pressing keyboard letter g.</p>
+				<img src="fractal2.png" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-12" hidden="hidden">
+				<p>Now you will see the images representing sequence 1 and sequence 2 on the screen.
+				Each time you see both, you have to decide whether you play sequence 1 or sequence 2.</p>
+				<div class="image-position">
+					<img src="fractal1.png" class="clickable" alt="Pink button" style="width: 200px; height: 200px;" data-page="1" />
+					<img src="fractal2.png" class="clickable" alt="Yellow button" style="width: 200px; height: 200px;" data-page="2" />
 				</div>
-				<div class="white-notes">
-				</div>
+				<p>Then you will simply play the sequence you choose on that attempt. Once you play the sequence, you will see whether you
+				obtain reward (5 points) or not. Your aim is to obtain as many points as possible at the end of this study, so play the
+				sequence you think will more likely give you reward! Careful though: The reward (points) associated with each sequence
+				will change from time to time. So pay attention and adapt your decisions if you think that the conditions changed.</p>
+				<p>Press 1 (or click the purple icon) to choose sequence 1.<p>
+				<p>Press 2 (or click the yellow icon) to choose sequence 2.</p>
+			</section>
+
+			<section class="page-13" hidden="hidden">
+				<piano-player notes="kgjh" pace="1.0" volumecontrol="0.5"></piano-player>
+				<p class="statusLbl">Play sequence.</p>
+				<img src="fractal2.png" class="active-icon" alt="Yellow button" style="width: 200px; height: 200px;" />
+			</section>
+
+			<section class="page-14" hidden="hidden">
+				<h2 class="statusLbl incorrect-msg">Wrong Sequence. You don't get the points</h2>
+			</section>
+
+			<section class="page-15" hidden="hidden">
+				<h2 class="statusLbl correct-msg">That was the correct sequence. You get 1 points.</h2>
 			</section>
 		</main>
 		<footer>
-			<span id="steppedGame" hidden="hidden">Press enter to move to next round</span>
+			<button id="nextButton" onclick="globalThis.onNextPage(event)">Next &gt;</button>
 		</footer>
 	</div>
+	<datalist id="volumesDrop">
+		<option value="0.0" label="Mute">
+		<option value="1.0" label="100%">
+	</datalist>
 	<div id="splash" hidden="hidden">6</div>
 
 	<script type="module">
+		import { setupVolumeControl, setupIcons, keyUpManager, keyDownManager } from "./script-helpers.js";
 
-		window.eventLog = [];
+		setupVolumeControl();
+		setupIcons();
+		document.addEventListener("keydown", async evt => await keyDownManager(evt));
+		document.addEventListener("keyup", async evt => await keyUpManager(evt, evt.key));
 
-
-		const keyboard = document.querySelector(".keyboard");
-		const oscList = [];
-		const audioContext = new AudioContext();
-		let keymap = null;
-		let defaultOctave = null;
-		let notes = "";
-		let currentNote = 0;
-		let roundTime = 4000;
-		let noTimedGame = true;
-
-		window.newGame = async function (evt) {
-			evt.target.blur();
-			eventLog = [];
-			currentNote = 0;
-			noTimedGame = true;
-
-			if (evt.target.value === "Stepped") {
-				document.getElementById("steppedGame").hidden = false;
-				document.getElementById("splash").hidden = true;
-			} else if (evt.target.value === "Timed") {
-				document.getElementById("steppedGame").hidden = true;
-				document.getElementById("splash").hidden = false;
-				noTimedGame = false;
-				await startTimedGame();
+		globalThis.onNextPage = async event => {
+			let round = globalThis.pageConfig.setup.round;
+			if (round === 14) {
+				document.querySelector(".page-14").hidden = true;
+				document.querySelector(".page-15").hidden = true;
+				round = 12;
+			} else if (round === 15) {
+				document.querySelector(".page-14").hidden = true;
+				document.querySelector(".page-15").hidden = true;
+				round = 12;
 			} else {
-				document.getElementById("steppedGame").hidden = true;
-				document.getElementById("splash").hidden = true;
+				round++;
 			}
+			globalThis.pageConfig.setup.round = round;
+			eventLog.push({ type: "startNextRound", time: performance.now(), round: round });
+
+			document.querySelector(".page-" + parseInt(round-1)).hidden = true;
+			document.querySelector(".page-" + parseInt(round)).hidden = false;
+			
+			if (round === 4) {
+				const activePiano = document.querySelector("section.page-4 piano-player");
+				await activePiano.playNextRound();
+			} else if (round === 6) {
+				document.getElementById("nextButton").disabled = true;
+			} else if (round == 7) {
+				document.getElementById("nextButton").disabled = false;
+			} else if (round === 9) {
+				const activePiano = document.querySelector("section.page-9 piano-player");
+				await activePiano.playNextRound();
+			} else if (round === 11) {
+				document.getElementById("nextButton").disabled = true;
+			} else if (round === 12) {
+				document.getElementById("nextButton").hidden = true;
+				document.getElementById("nextButton").disabled = true;
+				handleRound12();
+			} else if (round === 13) {
+				document.getElementById("nextButton").hidden = true;
+				document.getElementById("nextButton").disabled = true;
+			} else if (round === 14 || round === 14) {
+				document.getElementById("nextButton").hidden = false;
+				document.getElementById("nextButton").disabled = false;
+			}
+		};
+
+		function handleRound12() {
 		}
 
-		window.playNextRound = async function() {
-			const nextSequence = [...notes.slice(currentNote, currentNote + 4)];
-			currentNote = (currentNote + 4) % notes.length;
-
-			playSequence(nextSequence);
-			eventLog.push({ type: "startNextRound", gameType: "stepped", time: performance.now(), sequence: nextSequence });
-		}
-
-		window.setup = function setup(gameconfig) {
-			const whiteKeyboard = document.querySelector(".keyboard .white-notes");
-			const blackKeyboard = document.querySelector(".keyboard .black-notes");
-			keymap = gameconfig.keymap;
-			defaultOctave = gameconfig.defaultOctave;
-			notes = gameconfig.notes;
-			roundTime = gameconfig.roundTime;
-
-			for (let item of gameconfig.keyboard) {
-				const matchedKey = keymap.find(x => x.note === item.note && ((x.octave === undefined || x.octave === null) && item.octave === defaultOctave || x.octave === item.octave));
-				if (!matchedKey) {
-					continue;
-				}
-				const musicKey = document.createElement("button");
-				musicKey.dataset.note = item.note;
-				musicKey.dataset.octave = item.octave;
-				musicKey.dataset.freq = item.freq;
-				musicKey.dataset.key = matchedKey.key;
-				musicKey.style.left = `${item.alignment}px`;
-				musicKey.textContent = item.note;
-				const keyLabel = document.createElement("span");
-				keyLabel.className = "mapped-to";
-				keyLabel.textContent = matchedKey.key;
-				musicKey.appendChild(keyLabel);
-
-				hookEvents(musicKey);
-
-				if (item.note.length > 1) {
-					musicKey.className = "key black-key";
-					blackKeyboard.appendChild(musicKey);
-				} else {
-					musicKey.className = "key white-key";
-					whiteKeyboard.appendChild(musicKey);
-				}
-			}
-
-			hookKeymap();
-		}
-
-		async function startTimedGame() {
-			if (noTimedGame) {
-				return;
-			}
-			const timingElem = document.getElementById("splash");
-			let timing = 6;
-			timingElem.textContent = timing;
-			timingElem.hidden = false;
-			while (--timing > 0) {
-				timingElem.textContent = timing;
-				await wait(1000);
-			}
-			timingElem.hidden = true;
-			const nextSequence = [...notes.slice(currentNote, currentNote + 4)];
-			currentNote = (currentNote + 4) % notes.length;
-			await playSequence(nextSequence);
-			eventLog.push({ type: "startNextRound", gameType: "timed", time: performance.now(), sequence: nextSequence });
-			await wait (roundTime);
-			startTimedGame();
-		}
-
-		function hookKeymap() {
-			document.addEventListener("keydown", event => keyNotePressed(event));
-			document.addEventListener("keyup", event => keyNoteUnPressed(event));
-		}
-
-		async function keyNotePressed(evt) {
-			if (evt.repeat) {
-				return;
-			}
-			if (!document.getElementById("splash").hidden) {
-				return;
-			}
-			if (evt.key === " " || evt.key === "Return" || evt.key === "Enter") {
-				if (document.getElementById("gameType").value === "Stepped") {
-					await playNextRound();
-				}
-				return;
-			}
-			const matchedKey = keymap.find(x => x.key === evt.key);
-			if (matchedKey) {
-				const volumeControl = document.querySelector("input[name='volume']");
-				const octave = (matchedKey.octave !== undefined) ? matchedKey.octave : defaultOctave;
-				const note = matchedKey.note;
-				eventLog.push({ type: "keydown", time: performance.now(), key: evt.key });
-
-				const matchedElem = document.querySelector(`.keyboard .key[data-note="${note}"][data-octave="${octave}"]`);
-				oscList[octave + note] = playTone(matchedElem.dataset.freq, volumeControl.value);
-				matchedElem.dataset.pressed = "yes";
-			}
-		}
-
-		function keyNoteUnPressed(evt) {
-			const matchedKey = keymap.find(x => x.key === evt.key);
-			if (matchedKey) {
-				const octave = (matchedKey.octave !== undefined) ? matchedKey.octave : defaultOctave;
-				const note = matchedKey.note;
-				const matchedElem = document.querySelector(`.keyboard .key[data-note="${note}"][data-octave="${octave}"]`);
-				if (matchedElem) {
-					const dataset = matchedElem.dataset;
-					matchedElem.dataset.pressed = "";
-					eventLog.push({ type: "keyup", time: performance.now(), key: evt.key });
-
-					/*
-					if (dataset && dataset.pressed === "yes") {
-						oscList[dataset.octave+dataset.note].stop();
-						oscList[dataset.octave+dataset.note] = null;
-						dataset.pressed = "";
-					}
-					*/
-				}
-			}
-		}
-
-		function hookEvents(keyElement) {
-			keyElement.addEventListener("mousedown", notePressed, false);
-			keyElement.addEventListener("mouseup", noteReleased, false);
-			keyElement.addEventListener("mouseover", notePressed, false);
-			keyElement.addEventListener("mouseleave", noteReleased, false);
-		}
-
-
-		async function playSequence(sequence) {
-			if (sequence.length == 0) {
-				return;
-			}
-			const item = sequence.pop();
-			const volumeControl = document.querySelector("input[name='volume']");
-
-			const matchedKey = keymap.find(x => x.key === item);
-			const octave = (matchedKey.octave !== undefined) ? matchedKey.octave : defaultOctave;
-			const note = matchedKey.note;
-
-			const matchedElem = document.querySelector(`.keyboard .key[data-note="${note}"][data-octave="${octave}"]`);
-			oscList[octave + note] = playTone(matchedElem.dataset.freq, volumeControl.value);
-			matchedElem.dataset.pressed = "yes";
-
-			await wait (500);
-			matchedElem.dataset.pressed = "";
-			await playSequence(sequence);
-		}
-
-		async function wait(ms) {
-			return new Promise(resolve => {
-				setTimeout(resolve, ms);
-			});
-		}
-
-		function playTone(freq, volume, finish) {
-
-			const osc = audioContext.createOscillator();
-			// osc.connect(masterGainNode);
-			const decayRate = 1.5; // seconds
-			const envelope = audioContext.createGain();
-
-			osc.frequency.value = parseFloat(freq);
-			osc.type = "triangle";
-			envelope.gain.value = volume;
-
-			osc.connect(envelope);
-			envelope.connect(audioContext.destination);
-
-			// osc.start();
-
-			osc.start(audioContext.currentTime)
-
-			envelope.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + decayRate)
-			setTimeout(() => {
-				osc.stop(audioContext.currentTime);
-				if (finish) {
-					finish();
-				}
-			}, decayRate * 1000)
-
-			return osc;
-		}
-
-		function notePressed(event) {
-			if (event.buttons & 1) {
-				const dataset = event.target.dataset;
-				const volumeControl = document.querySelector("input[name='volume']");
-				eventLog.push({ type: "keydown", time: performance.now(), key: dataset.key });
-
-				if (!document.getElementById("splash").hidden) {
-					return;
-				}
-
-				if (!dataset.pressed) {
-					oscList[dataset.octave+dataset.note] = playTone(dataset.freq, volumeControl.value);
-					dataset.pressed = "yes";
-				}
-			}
-
-		}
-
-		function noteReleased(event) {
-			const dataset = event.target.dataset;
-			if (event.type !== "mouseleave") {
-				eventLog.push({ type: "keyup", time: performance.now(), key: dataset.key });
-			}
-
-			if (dataset.pressed === "yes") {
-				dataset.pressed = "";
-			}
-		}
 	</script>
-
 	<script type="module">
-		const getConfig = async function() {
-			const response = await fetch("piano.json", {
-				type: "GET",
-				credentials: "same-origin"
-			});
-			const gameConfig = await response.json();
-			window.setup(gameConfig);
-		}
+		import PianoPlayerElement from "./piano-player.js";
 
-		getConfig();
+		customElements.define("piano-player", PianoPlayerElement);
 	</script>
 </body>
 </html>
