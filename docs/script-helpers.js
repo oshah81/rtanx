@@ -201,7 +201,7 @@ async function keyDownManager(evt) {
 
 
 async function keyUpManager(evt, key) {
-	const requiredTrials = 2;
+	const requiredTrials = (await globalThis.pageConfig.configPromise).practiceTrials;
 
 	pressedKeys.delete(key);
 
