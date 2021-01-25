@@ -59,12 +59,12 @@ function evaluateSequence(roundStart, keymap, correctSequence) {
 
 		typedCharacters += elem.key;
 		if (typedCharacters === correctSequence) {
-			updatedEventLogs.push({type: "correctSequence", time: performance.now(), sequence: correctSequence });
+			updatedEventLogs.push({type: "correctSequence", time: performance.now(), sequence: correctSequence, round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial, mouse: false });
 			res = 1;
 			break;
 		} else {
 			if (!correctSequence.toLowerCase().startsWith(typedCharacters.toLowerCase())) {
-				updatedEventLogs.push({type: "incorrectSequence", time: performance.now(), sequence: typedCharacters });
+				updatedEventLogs.push({type: "incorrectSequence", time: performance.now(), sequence: typedCharacters, round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial, mouse: false });
 				res = 2;
 				break;
 			}
@@ -109,7 +109,7 @@ function checkStep13(piano) {
 
 		typedCharacters += elem.key;
 		if (typedCharacters === correctSequence) {
-			updatedEventLogs.push({type: "correctSequence", time: performance.now(), sequence: correctSequence });
+			updatedEventLogs.push({type: "correctSequence", time: performance.now(), sequence: correctSequence, round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial, mouse: false });
 			break;
 		} else {
 			if (!correctSequence.toLowerCase().startsWith(typedCharacters.toLowerCase())) {
@@ -120,7 +120,7 @@ function checkStep13(piano) {
 	}
 
 	if (wasIncorrectSequence && notesPlayed === 4) {
-		updatedEventLogs.push({type: "incorrectSequence", time: performance.now(), sequence: typedCharacters });
+		updatedEventLogs.push({type: "incorrectSequence", time: performance.now(), sequence: typedCharacters, round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial, mouse: false });
 	}
 
 	if (updatedEventLogs.length > 0) {
@@ -153,9 +153,10 @@ function countCorrectSequences(piano, requiredTrials) {
 }
 
 function gamePage(icon, evt) {
+	const wasMouse = evt.type == "mouse";
 	globalThis.pageConfig.setup.round = 13;
 	globalThis.pageConfig.setup.trial++;
-	eventLog.push({ type: "startNextRound", time: performance.now(), round: 13, trial: globalThis.pageConfig.setup.trial });
+	eventLog.push({ type: "startNextRound", time: performance.now(), round: 13, trial: globalThis.pageConfig.setup.trial, mouse: wasMouse });
 
 	if (icon === 1) {
 		document.querySelector(".page-13 > piano-player").notes = "gjhk";
@@ -175,32 +176,33 @@ function gamePage(icon, evt) {
 
 const pressedKeys = new Set();
 
-async function keyDownManager(evt) {
-	if (evt.repeat) {
+async function keyDownManager(evt, key) {
+	if (typeof evt.repeat !== "undefined" && evt.repeat) {
 		return;
 	}
-	
-	if (pressedKeys.has(evt.key)) {
+
+	if (pressedKeys.has(key)) {
 		return;
 	} else {
-		pressedKeys.add(evt.key);
+		pressedKeys.add(key);
 	}
 
 	const activePiano = document.querySelector(`section:not([hidden]) piano-player`);
 	if (activePiano) {
-		if (evt.key === "F1") {
+		if (key === "F1") {
 			evt.preventDefault();
 			evt.stopPropagation();
 			await activePiano.playNextRound();
 			return false;
 		}
 	
-		await activePiano.keyNotePressed(evt);
+		await activePiano.keyNotePressed(evt, key);
 	}
 }
 
 
 async function keyUpManager(evt, key) {
+	const wasMouse = evt.type.startsWith("mouse");
 	pressedKeys.delete(key);
 
 	if (!document.getElementById("nextButton").disabled) {
@@ -231,13 +233,13 @@ async function keyUpManager(evt, key) {
 
 		if (!document.querySelector(".page-4").hidden) {
 			if (checkStep4(activePiano, "k")) {
-				globalThis.onNextPage(evt);
+				await globalThis.onNextPage(evt);
 			}
 		}
 
 		if (!document.querySelector(".page-9").hidden) {
 			if (checkStep4(activePiano, "h")) {
-				globalThis.onNextPage(evt);
+				await globalThis.onNextPage(evt);
 			}
 		}
 
@@ -251,12 +253,13 @@ async function keyUpManager(evt, key) {
 					const requiredTrials = (await globalThis.pageConfig.configPromise).practicetrials;
 					const numCorrectSequences = countCorrectSequences(activePiano, requiredTrials);
 					if (numCorrectSequences == requiredTrials) {
-						globalThis.onNextPage(evt);
+						await globalThis.onNextPage(evt);
+					} else {
+						const statusLbl = document.querySelector(".page-6 > .statusLbl");
+						statusLbl.classList.remove("incorrect-msg");
+						statusLbl.classList.add("correct-msg");
+						statusLbl.textContent = `Correct! Now play it again ${requiredTrials - numCorrectSequences} more time${(requiredTrials - numCorrectSequences) == 1 ? '' : 's'}.`;
 					}
-					const statusLbl = document.querySelector(".page-6 > .statusLbl");
-					statusLbl.classList.remove("incorrect-msg");
-					statusLbl.classList.add("correct-msg");
-					statusLbl.textContent = `Correct! Now play it again ${requiredTrials - numCorrectSequences} more time${(requiredTrials - numCorrectSequences) == 1 ? '' : 's'}.`;
 					break;
 				}
 				case 2: {
@@ -279,12 +282,13 @@ async function keyUpManager(evt, key) {
 					const requiredTrials = (await globalThis.pageConfig.configPromise).practicetrials;
 					const numCorrectSequences = countCorrectSequences(activePiano, requiredTrials);
 					if (numCorrectSequences == requiredTrials) {
-						globalThis.onNextPage(evt);
+						await globalThis.onNextPage(evt);
+					} else {
+						const statusLbl = document.querySelector(".page-11 > .statusLbl");
+						statusLbl.classList.remove("incorrect-msg");
+						statusLbl.classList.add("correct-msg");
+						statusLbl.textContent = `Correct! Now play it again ${requiredTrials - numCorrectSequences} more time${(requiredTrials - numCorrectSequences) == 1 ? '' : 's'}.`;
 					}
-					const statusLbl = document.querySelector(".page-11 > .statusLbl");
-					statusLbl.classList.remove("incorrect-msg");
-					statusLbl.classList.add("correct-msg");
-					statusLbl.textContent = `Correct! Now play it again ${requiredTrials - numCorrectSequences} more time${(requiredTrials - numCorrectSequences) == 1 ? '' : 's'}.`;
 					break;
 				}
 				case 2: {
@@ -305,7 +309,7 @@ async function keyUpManager(evt, key) {
 				if (numCorrectSequences === 1) {
 					globalThis.pageConfig.setup.round = 15;
 
-					eventLog.push({ type: "startNextRound", time: performance.now(), round: globalThis.round });
+					eventLog.push({ type: "startNextRound", time: performance.now(), round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial, mouse: wasMouse });
 					document.querySelector(".page-12").hidden = true;
 					document.querySelector(".page-13").hidden = true;
 					document.querySelector(".page-14").hidden = true;

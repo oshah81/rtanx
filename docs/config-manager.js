@@ -19,6 +19,7 @@ export default class ConfigManager {
 	// EventLog contains the following parameters
 	// type = keydown keyup startNextRound correctSequence
 	// time = performance.now
+	// mouse 
 	// key
 	// round
 	// trial
@@ -44,7 +45,7 @@ export default class ConfigManager {
 		this.probJson = await probabilityResponse.json();
 		this.setup.id = this.probJson.id;
 		this.flush();
-		
+
 		return this._config;
 	}
 

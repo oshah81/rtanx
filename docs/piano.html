@@ -161,7 +161,7 @@
 
 		setupVolumeControl();
 		setupIcons();
-		document.addEventListener("keydown", async evt => await keyDownManager(evt));
+		document.addEventListener("keydown", async evt => await keyDownManager(evt, evt.key));
 		document.addEventListener("keyup", async evt => await keyUpManager(evt, evt.key));
 
 		globalThis.onNextPage = async event => {
