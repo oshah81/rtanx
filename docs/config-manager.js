@@ -54,7 +54,7 @@ export default class ConfigManager {
 	}
 
 	flush() {
-		localStorage.setup = JSON.stringify(this.setup);
+		sessionStorage.setup = JSON.stringify(this.setup);
 	}
 
 	save() {

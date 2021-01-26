@@ -330,6 +330,7 @@ async function keyUpManager(evt, key) {
 				const rolledDie = await checkProbabilityOfWin(activePiano);
 
 				if (rolledDie && numCorrectSequences === 1) {
+					globalThis.pageConfig.setup.score = globalThis.pageConfig.setup.score + 10;
 					globalThis.pageConfig.setup.round = 21;
 				} else {
 					globalThis.pageConfig.setup.round = 20;
@@ -362,6 +363,7 @@ function handleRound23() {
 }
 
 function handleRound24() {
+	document.querySelector(".page-24 .scoreboard").textContent = `Your score: ${globalThis.pageConfig.setup.score} pts`;
 }
 
 async function navigateToPage(evt) {
@@ -417,6 +419,7 @@ async function navigateToPage(evt) {
 	} else if (round === 24) {
 		document.getElementById("nextButton").hidden = true;
 		document.getElementById("nextButton").disabled = true;
+		handleRound24();
 	}
 }
 
