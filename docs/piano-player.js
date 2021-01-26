@@ -108,7 +108,7 @@ export default class PianoPlayerElement extends HTMLElement {
 		if (matchedKey) {
 			const octave = (matchedKey.octave !== undefined) ? matchedKey.octave : this.defaultOctave;
 			const note = matchedKey.note;
-			const wasMouse = evt.type.startsWith("mouse");
+			const wasMouse = evt.type.startsWith("mouse") || evt.type.startsWith("click");
 			eventLog.push({ type: "keydown", time: performance.now(), key: key, mouse: wasMouse, round: globalThis.pageConfig.setup.round, trial: globalThis.pageConfig.setup.trial });
 
 			const matchedElem = this.shadow.querySelector(`.keyboard .key[data-note="${note}"][data-octave="${octave}"]`);
@@ -122,7 +122,7 @@ export default class PianoPlayerElement extends HTMLElement {
 		if (matchedKey) {
 			const octave = (matchedKey.octave !== undefined) ? matchedKey.octave : this.defaultOctave;
 			const note = matchedKey.note;
-			const wasMouse = evt.type.startsWith("mouse");
+			const wasMouse = evt.type.startsWith("mouse") || evt.type.startsWith("click");
 			const matchedElem = this.shadow.querySelector(`.keyboard .key[data-note="${note}"][data-octave="${octave}"]`);
 			if (matchedElem) {
 				const dataset = matchedElem.dataset;
@@ -188,7 +188,7 @@ export default class PianoPlayerElement extends HTMLElement {
 		return this._audioContext;
 	}
 
-	playTone(freq, finish) {
+	playTone(freq) {
 
 		const osc = this.audioContext.createOscillator();
 
@@ -202,14 +202,20 @@ export default class PianoPlayerElement extends HTMLElement {
 		osc.connect(envelope);
 		envelope.connect(this.audioContext.destination);
 
-		osc.start(this.audioContext.currentTime)
+		osc.start(this.audioContext.currentTime);
 
-		envelope.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + decayRate)
+		envelope.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + decayRate);
+
+		setTimeout(() => {
+			if (envelope.gain.value == this.volumeControl) {
+				// firefox workaround.
+				setTimeout(() => {
+					osc.stop(this.audioContext.currentTime);
+				}, 250);
+			}
+		}, 10);
 		setTimeout(() => {
 			osc.stop(this.audioContext.currentTime);
-			if (finish) {
-				finish();
-			}
 		}, decayRate * 1000)
 
 		return osc;

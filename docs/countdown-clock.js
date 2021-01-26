@@ -1,12 +1,11 @@
-
-class CountDownClock extends HTMLElement {
+export default class CountDownClockElement extends HTMLElement {
 	constructor() {
 		super();
-	
+		this.stopTimer();
 	}
 
 	static get observedAttributes() {
-		return ["width", "height", "fontsize", "time"];
+		return ["width", "hidetext", "time", "autostart"];
 	}
 
 	attributeChangedCallback(name, oldVal, newVal) {
@@ -16,89 +15,155 @@ class CountDownClock extends HTMLElement {
 		if (name === "width") {
 			this.width = newVal;
 		}
-		if (name === "height") {
-			this.height = newVal;
-		}
-		if (name === "fontsize") {
-			this.fontsize = newVal;
+		if (name === "hidetext") {
+			this.hideText = newVal;
 		}
 		if (name === "time") {
 			this.time = parseFloat(newVal);
 		}
+		if (name === "autostart") {
+			this.autostart = newVal;
+		}
 	}
 
 	connectedCallback() {
-		this.timeLeft = this.time;
-		const string styleElement = document.createElement("style");
-		styleElement.innerHTML = `.base-timer { position: relative; }
-			.base-timer__circle { fill: none; stroke: none; }
-			.base-timer__path-elapsed { stroke-width: 7px; stroke: grey; }`;
-
+		this.timeLeft = this.time * 1000;
 		this.shadow = this.attachShadow({ mode: "closed" });
 
-		this.svgElement = document.createElement("svg");
-		this.svgElement.classList.add("base-timer__svg");
-		this.svgElement.viewBox = "0 0 100 100";
-		this.svgElement.innerHTML = `<g class="base-timer__circle"><circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" /></g>`;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = this.width;
+        this.context = canvas.getContext("2d");
+        this.shadow.appendChild(canvas);
 
-		this.spanElement = document.createElement("span");
-		this.spanElement.style.width = this.width;
-		this.spanElement.style.height = this.width;
-		this.spanElement.style.position = "absolute";
-		this.spanElement.style.top = 0;
-		this.spanElement.style.display = "flex";
-		this.spanElement.alignItems = "center";
-		this.spanElement.justifyContent = "center";
-		this.spanElement.fontSize = this.fontSize;
-		this.spanElement.textContent = this.formatTimeLeft(this.time);
-
-		this.shadow.appendChild(styleElement);
-		this.shadow.appendChild(this.svgElement);
-
-		this.shadow.appendChild(this.spanElement);
+		if (this.autostart) {
+			this.startTimer();
+		}
 	}
 
 	disconnectedCallback() {
+		this.stopTimer();
 	}
-
-	const 
 
 	formatTimeLeft(timeLeft) {
-		const time = this.time;
-		const minutes = Math.floor(time / 60);
-
-		let seconds = time % 60;
-
-		return `${seconds}`;
+		let seconds = Math.ceil(this.timeLeft / 1000.0);
+		return seconds;
 	}
 
-	get fontSize() {
-		return this.getAttribute("fontsize");
-	}
-	set fontSize(value) {
-		this.setAttribute("fontsize", value);
+	startTimer() {
+		this.start = null;
+		this.timeLeft = this.time * 1000;
+		this.shadow.querySelector("canvas").hidden = false;
+
+		this.started = true;
+		this.frameAdvance = (timestamp) => {
+			if (!this.started) {
+				return false;
+			}
+			if (this.start === null) {
+				this.start = timestamp;
+			}
+			const elapsed = timestamp - this.start;
+			this.start = timestamp;
+
+			this.timeLeft -= elapsed;
+
+			this.updateClock();
+
+			if (this.timeLeft < 1) {
+				this.triggerTimeOut();
+				this.start = null;
+			} else {
+				requestAnimationFrame(this.frameAdvance);
+			}
+		};
+		requestAnimationFrame(this.frameAdvance);
 	}
 
-	get height() {
-		return this.getAttribute("height");
+	stopTimer() {
+		this.start = null;
+		this.timeLeft = this.time;
+		this.started = false;
+		this.frameAdvance = null;
 	}
-	set height(value) {
-		this.setAttribute("height", value);
+
+	updateClock() {
+		const timeFraction = this.timeLeft / this.time / 1000.0;
+        const radius = this.width/2;
+        this.context.clearRect(0, 0, this.width, this.width);
+        this.context.beginPath();
+        this.context.moveTo(radius, radius);
+		const currentTime = timeFraction;
+
+        const gradient = this.context.createRadialGradient(radius, radius, 3, radius, radius, radius);
+        gradient.addColorStop(0, "#ffffff");
+
+        gradient.addColorStop(1, `hsl(${Math.round(currentTime*120)}, 100%, 50%)`);
+
+        this.context.fillStyle = gradient;
+        this.context.arc(radius, radius, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * currentTime, false);
+        this.context.fill();
+
+		if (!this.hideText) {
+			const timeLeftText = this.formatTimeLeft(this.timeLeft);
+			const dims = this.context.measureText(timeLeftText);
+			this.context.beginPath();
+			this.context.font = "24px source-sans-pro";
+			this.context.fillStyle = "black";
+			this.context.moveTo(0,0);
+			this.context.textAlign = "center";
+			this.context.fillText(timeLeftText, radius, radius+dims.actualBoundingBoxAscent/2, 150, 150);
+			this.context.fill();
+		}
+	}
+
+	triggerTimeOut() {
+		if (this.started) {
+			const detail = {
+
+			};
+			this.shadow.querySelector("canvas").hidden = true;
+			this.dispatchEvent(new CustomEvent("timeout", { bubbles: true, detail: detail }));
+		}
 	}
 
 	get width() {
-		return this.getAttribute("width");
+		if(!this.hasAttribute("width")) {
+			return 50;
+		} else {
+			return this.getAttribute("width");
+		}
 	}
 	set width(value) {
 		this.setAttribute("width", value);
+	}
+
+	get hideText() {
+		return this.hasAttribute("hidetext");
+	}
+	set hideText(value) {
+		if (value) {
+			this.setAttribute("hidetext", value);
+		} else {
+			this.removeAttribute("hidetext");
+		}
+	}
+
+	get autostart() {
+		return this.hasAttribute("autostart");
+	}
+	set autostart(value) {
+		if (value) {
+			this.setAttribute("autostart", value);
+		} else {
+			this.removeAttribute("autostart");
+		}
 	}
 
 	get time() {
 		return parseFloat(this.getAttribute("time"));
 	}
 	set time(value) {
-		cont attrib = `${value}`;
-		this.timeLeft = attrib;
+		const attrib = `${value}`;
 		this.setAttribute("time", value);
 	}
 }

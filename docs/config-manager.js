@@ -1,16 +1,16 @@
 export default class ConfigManager {
 	constructor() {
-		if (!localStorage.setup) {
-			localStorage.setup = JSON.stringify({
+		if (!sessionStorage.setup) {
+			sessionStorage.setup = JSON.stringify({
 				eventLog: [],
 				round: 1,
 				trial: 0,
-				probabilityindex: 0,
 				version: 1,
+				score: 0,
 				id: 0
 			});
 		}
-		this.setup = JSON.parse(localStorage.setup);
+		this.setup = JSON.parse(sessionStorage.setup);
 
 		this._config = null;
 		this.configPromise = this.getConfig();
@@ -23,6 +23,7 @@ export default class ConfigManager {
 	// key
 	// round
 	// trial
+	// score
 
 	async getConfig() {
 		const pianoResponse = await fetch("piano.json", {
@@ -49,10 +50,15 @@ export default class ConfigManager {
 		return this._config;
 	}
 
+	newGame() {
+	}
+
 	flush() {
 		localStorage.setup = JSON.stringify(this.setup);
 	}
 
 	save() {
+		this.flush();
+		
 	}
 }
