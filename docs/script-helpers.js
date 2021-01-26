@@ -31,9 +31,9 @@ function setupIcons() {
 }
 
 function generateRandomValues() {
-	let arr = new Uint32Array(100);
+	let arr = new Uint16Array(100);
 	crypto.getRandomValues(arr);
-	return arr;
+	return Array.from(arr).map(x => x/65536.0);
 }
 
 const randomVals = generateRandomValues();
@@ -45,7 +45,7 @@ function checkProbabilityOfWin(activePiano) {
 
 	const probabilityArray = globalThis.pageConfig.probJson.probabilities;
 	const activeProbability = probabilityArray[globalThis.pageConfig.setup.trial];
-	const probabilityOfWin = (activePiano.dataset.sequence == 1) ? activeProbability.score1 : activeProbability.score2;
+	const probabilityOfWin = (activePiano.dataset.sequence == 1) ? activeProbability.score1 / (activeProbability.score1 + activeProbability.score2) :  activeProbability.score2 / (activeProbability.score1 + activeProbability.score2);
 
 	return randomVals[globalThis.pageConfig.setup.trial] > probabilityOfWin;
 }
